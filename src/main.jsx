@@ -32,8 +32,18 @@ function Logo({item}) {
 }
 
 function Chart({data, selected, metric, seasons}) {
+    const [hiddenIds, setHiddenIds] = useState([]);
+    const visibleCount = selected.filter(item => !hiddenIds.includes(item.id)).length;
+
     useEffect(() => {
-        if (!window.AmCharts || !selected.length) return;
+        setHiddenIds(current => {
+            const remaining = current.filter(id => selected.some(item => item.id === id));
+            return remaining.length === current.length ? current : remaining;
+        });
+    }, [selected]);
+
+    useEffect(() => {
+        if (!window.AmCharts || !selected.length || !visibleCount) return;
         const chart = window.AmCharts.makeChart('chart', {
             type: 'serial', color: '#405247', fontFamily: 'Inter, Arial, sans-serif', backgroundAlpha: 0,
             dataProvider: seasons.map(season => {
@@ -62,17 +72,28 @@ function Chart({data, selected, metric, seasons}) {
                 bulletSize: 22,
                 connect: false,
                 balloonText: `<img src="${logoUrl(item)}" width="20" height="20" style="vertical-align:middle;object-fit:contain;margin-right:6px" alt="">[[title]]: <b>[[value]]</b>`
-            })),
-            chartCursor: {cursorColor: '#829788', cursorAlpha: 0.3, categoryBalloonEnabled: false},
+            })).filter((_, i) => !hiddenIds.includes(selected[i].id)),
+            chartCursor: {cursorColor: '#829788', cursorAlpha: 0.3, categoryBalloonEnabled: true, zoomable: false},
             creditsPosition: 'bottom-right', marginTop: 24, marginRight: 25,
         });
         return () => chart.clear();
-    }, [data, selected, metric, seasons]);
+    }, [data, selected, metric, seasons, hiddenIds, visibleCount]);
     return <>
-        <div id="chart" className="chart" role="img" aria-label="Historical attendance comparison chart"/>
-        <div className="chart-legend">{selected.map((item, i) => <div key={item.id}><span className="legend-color"
-                                                                                          style={{background: colors[i % colors.length]}}/><Logo
-            item={item}/><span>{item.title.trim()}</span></div>)}</div>
+        <p className="chart-mobile-hint">Swipe to see all seasons · Tap a point for details</p>
+        <div className="chart-scroll" style={{'--chart-min-width': `${Math.max(320, seasons.length * 74 + 70)}px`}}>
+            <div className="chart-container">
+                <div id="chart" className="chart" role="img" aria-label="Historical attendance comparison chart"/>
+                {!visibleCount && <div className="chart-hidden-message">Select a team or league below to show its line.</div>}
+            </div>
+        </div>
+        <p className="chart-legend-hint">Select a name to show or hide its line.</p>
+        <div className="chart-legend" aria-label="Show or hide chart lines">{selected.map((item, i) => {
+            const visible = !hiddenIds.includes(item.id);
+            return <button type="button" key={item.id} className={visible ? 'legend-item' : 'legend-item is-hidden'}
+                           aria-pressed={visible} onClick={() => setHiddenIds(current => visible ? [...current, item.id] : current.filter(id => id !== item.id))}>
+                <span className="legend-color" style={{background: colors[i % colors.length]}}/><Logo item={item}/><span>{item.title.trim()}</span>
+            </button>;
+        })}</div>
     </>;
 }
 
@@ -296,7 +317,7 @@ function App() {
                                     <h3>Attendance over time</h3><p>Compare the numbers, season by season.</p></div>
                             </div>
                             <div className="chart-label">{metric === 'average' ? 'AVERAGE ATTENDANCE' : 'STADIUM OCCUPANCY'} <span>↑</span></div>
-                            {selected.length ? <Chart data={records} selected={selected} metric={metric} seasons={seasons}/> :
+                            {selected.length ? <Chart key={mode} data={records} selected={selected} metric={metric} seasons={seasons}/> :
                                 <div className="empty-chart">Choose a {mode === 'clubs' ? 'club' : 'league'} to see the chart.</div>}
                             <div className="chart-foot"><span>SEASON</span><span>ZERO VALUES AND GAPS ARE SHOWN AS NO DATA</span></div>
                             <div className="snapshot">

@@ -58,3 +58,32 @@
 .workspace .controls { align-self: start; }
 .filter-hint { margin: 10px 0 0; color: #738178; font-size: 11px; line-height: 1.5; }
 .measure-selector button { font-size: 10px; }
+
+.chart-scroll { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; }
+.chart-container { position: relative; }
+.chart-hidden-message { position: absolute; inset: 0; display: grid; place-items: center; padding: 20px; color: #596d5e; font-size: 13px; text-align: center; }
+.chart-legend-hint, .chart-mobile-hint { color: #596d5e; font-size: 11px; line-height: 1.5; }
+.chart-legend-hint { margin: 8px 0 10px; }
+.chart-mobile-hint { display: none; }
+.chart-legend .legend-item { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 5px 7px; color: #283c2e; font: inherit; text-align: left; background: #edf1e8; border: 1px solid #d8e0d3; border-radius: 4px; }
+.chart-legend .legend-item.is-hidden { color: #68776b; background: transparent; border-style: dashed; }
+.chart-legend .legend-item.is-hidden .entity-logo, .chart-legend .legend-item.is-hidden .legend-color { opacity: .4; }
+.chart-legend .legend-item.is-hidden span:last-child { text-decoration: line-through; }
+.chart-legend .legend-item:focus-visible { outline: 2px solid #426f30; outline-offset: 2px; }
+
+@media (max-width: 800px) {
+  .hero { min-height: 0; }
+  .hero-art { display: none; }
+  .hero-copy { padding: 28px 5% 24px; }
+  .hero h1 { margin: 16px 0 12px; font-size: clamp(32px, 8vw, 42px); line-height: 1.05; letter-spacing: -1.2px; }
+  .hero p { margin: 0; font-size: 13px; line-height: 1.5; }
+  .hero-link { margin-top: 12px; padding-bottom: 6px; }
+  .explorer { padding-top: 30px; }
+  .explorer .section-heading { margin-bottom: 18px; }
+  .explorer .section-heading h2 { margin: 10px 0 6px; font-size: clamp(26px, 6.5vw, 34px); }
+  .explorer .section-heading p { font-size: 13px; }
+  .chart-mobile-hint { display: block; margin: 10px 0 0; }
+  .chart-scroll .chart-container { min-width: var(--chart-min-width); }
+  .chart-scroll .chart { touch-action: pan-x pan-y; }
+  .chart-legend .legend-item { min-height: 44px; }
+}
