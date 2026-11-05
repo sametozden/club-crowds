@@ -1,0 +1,60 @@
+.results {
+  background: #f9faf4;
+  color: #1f3025;
+}
+
+.results .muted,
+.results-top p,
+.chart-label,
+.chart-foot,
+.snapshot h3 span {
+  color: #596d5e;
+}
+
+.results .metric {
+  background: #e9eee4;
+}
+
+.results .metric button {
+  color: #53685a;
+}
+
+.results .metric button.active {
+  background: #dceaa8;
+  color: #203628;
+}
+
+.results .chart-label span,
+.results .ranking b {
+  color: #416622;
+}
+
+.results .chart-legend {
+  color: #283c2e;
+}
+
+.results .chart-foot,
+.results .ranking > div {
+  border-color: #d6ded1;
+}
+
+.results .ranking .rank {
+  color: #697e6b;
+}
+
+.results .empty-chart,
+.results .ranking p {
+  color: #596d5e;
+}
+
+.options {
+  height: 280px;
+}
+
+#league-filter {
+  margin-bottom: 10px;
+}
+
+.workspace .controls { align-self: start; }
+.filter-hint { margin: 10px 0 0; color: #738178; font-size: 11px; line-height: 1.5; }
+.measure-selector button { font-size: 10px; }
