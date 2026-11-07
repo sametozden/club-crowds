@@ -14,7 +14,15 @@ export function readComparisonUrl(url) {
   const to = params.get('to') || '';
   const metric = params.get('metric') === 'percentage' ? 'percentage' : 'average';
   const season = params.get('season') || '';
-  return { mode, ids: [...new Set(ids)].slice(0, selectionLimit(mode)), from, to, metric, season };
+  const topFiveOnly = params.get('top5') === '1';
+  return { mode, ids: [...new Set(ids)].slice(0, selectionLimit(mode)), from, to, metric, season, topFiveOnly };
+}
+
+export function topFiveUrl(url, enabled) {
+  const next = new URL(url);
+  if (enabled) next.searchParams.set('top5', '1');
+  else next.searchParams.delete('top5');
+  return next;
 }
 
 export function rankingSeasonUrl(url, season) {

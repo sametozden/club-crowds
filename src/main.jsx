@@ -12,7 +12,8 @@ import {
     readComparisonUrl,
     resolveSeasonRange,
     seasonRangeUrl,
-    selectionLimit
+    selectionLimit,
+    topFiveUrl
 } from './comparison-url.js';
 import {attendanceValue} from './attendance-value.js';
 import {latestClubLeagues} from './club-leagues.js';
@@ -97,8 +98,8 @@ function Chart({data, selected, metric, seasons}) {
     </>;
 }
 
-function TopFifty({dataset, season, metric}) {
-    const rows = useMemo(() => topClubs(dataset, season, metric), [dataset, season, metric]);
+function TopFifty({dataset, season, metric, topFiveOnly}) {
+    const rows = useMemo(() => topClubs(dataset, season, metric, topFiveOnly), [dataset, season, metric, topFiveOnly]);
     useEffect(() => {
         if (!window.AmCharts || !rows.length) return;
         const chart = window.AmCharts.makeChart('top-fifty-chart', {
@@ -130,7 +131,7 @@ function TopFifty({dataset, season, metric}) {
         <div className="top-fifty-header">
             <div>
                 <div className="eyebrow muted">CLUB RANKINGS</div>
-                <h3>Top 50 <span>{season && seasonLabel(season)}</span></h3><p>The biggest crowds across the available leagues.</p></div>
+                <h3>Top 50 <span>{season && seasonLabel(season)}</span></h3><p>{topFiveOnly ? 'The biggest crowds across the top five leagues.' : 'The biggest crowds across the available leagues.'}</p></div>
         </div>
         <div className="top-fifty-note">{rows.length} CLUBS · {metric === 'average' ? 'AVERAGE ATTENDANCE' : 'STADIUM OCCUPANCY'} · ZERO VALUES
             EXCLUDED
@@ -157,6 +158,7 @@ function App() {
     const [from, setFrom] = useState(() => readComparisonUrl(window.location.href).from);
     const [to, setTo] = useState(() => readComparisonUrl(window.location.href).to);
     const [rankingSeason, setRankingSeason] = useState(() => readComparisonUrl(window.location.href).season);
+    const [topFiveOnly, setTopFiveOnly] = useState(() => readComparisonUrl(window.location.href).topFiveOnly);
     useEffect(() => {
         fetch(`${import.meta.env.BASE_URL}data/attendance.json`).then(r => {
             if (!r.ok) throw Error();
@@ -172,6 +174,7 @@ function App() {
             setTo(state.to);
             setMetric(state.metric);
             setRankingSeason(state.season);
+            setTopFiveOnly(state.topFiveOnly);
             setSearch('');
         };
         window.addEventListener('popstate', restore);
@@ -214,6 +217,10 @@ function App() {
     const updateRankingSeason = value => {
         setRankingSeason(value);
         window.history.pushState(null, '', rankingSeasonUrl(window.location.href, value));
+    };
+    const updateTopFiveOnly = enabled => {
+        setTopFiveOnly(enabled);
+        window.history.pushState(null, '', topFiveUrl(window.location.href, enabled));
     };
     const toggle = id => {
         const current = selected.map(item => item.id);
@@ -272,7 +279,8 @@ function App() {
                                 <select id="ranking-season" value={selectedRankingSeason}
                                         onChange={e => updateRankingSeason(e.target.value)}>{rankingSeasons.map(value => <option value={value}
                                                                                                                                  key={value}>{seasonLabel(value)}</option>)}</select>
-                                <p className="filter-hint">Rankings include clubs from all available leagues.</p>
+                                <label className="top-five-filter"><input type="checkbox" checked={topFiveOnly} onChange={e => updateTopFiveOnly(e.target.checked)}/><span>Just Top 5 Leagues</span></label>
+                                <p className="filter-hint">{topFiveOnly ? 'Premier League, LaLiga, Bundesliga, Serie A and Ligue 1.' : 'Rankings include clubs from all available leagues.'}</p>
                             </> : <>
                                 <label className="label" htmlFor="search">SELECT {mode === 'clubs' ? 'CLUBS' : 'LEAGUES'} <small>UP
                                     TO {selectionLimit(mode)}</small></label>
@@ -310,7 +318,7 @@ function App() {
                                 </button>
                             </div>
                         </aside>
-                        <div className="results">{mode === 'top50' ? <TopFifty dataset={dataset} season={selectedRankingSeason} metric={metric}/> : <>
+                        <div className="results">{mode === 'top50' ? <TopFifty dataset={dataset} season={selectedRankingSeason} metric={metric} topFiveOnly={topFiveOnly}/> : <>
                             <div className="results-top">
                                 <div>
                                     <div className="eyebrow muted">THE BIG PICTURE <span> / {mode.toUpperCase()}</span></div>

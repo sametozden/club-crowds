@@ -57,6 +57,8 @@
 
 .workspace .controls { align-self: start; }
 .filter-hint { margin: 10px 0 0; color: #738178; font-size: 11px; line-height: 1.5; }
+.top-five-filter { display: flex; align-items: center; gap: 9px; margin-top: 18px; color: #32443a; font-size: 12px; font-weight: 600; cursor: pointer; }
+.controls .top-five-filter input { width: 16px; height: 16px; margin: 0; padding: 0; accent-color: #426f30; flex: none; }
 .measure-selector button { font-size: 10px; }
 
 .chart-scroll { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; }

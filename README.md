@@ -127,7 +127,7 @@ club-crowds/
 - The historical database does not consistently distinguish missing values from genuine zero attendance. The interface treats zero attendance and occupancy as **No data**, excludes them from the top 50, and leaves gaps in line charts. The source values remain unchanged.
 - Team and league names and logos come from the historical data. Some images are unavailable locally.
 - A comparison URL can look like `?compare=clubs&ids=1,2&from=1920&to=2627&metric=percentage`. Opening it restores the comparison; browser back and forward navigate through changes.
-- A ranking URL can look like `?compare=top50&season=2627&metric=average`. The selected season and metric are restored when the link is opened.
+- A ranking URL can look like `?compare=top50&season=2627&metric=average&top5=1`. The selected season, metric and optional top-five-leagues filter are restored when the link is opened.
 - This is an experimental project, and source data may be incomplete or change as a season progresses.
 
 ## Third-party assets
